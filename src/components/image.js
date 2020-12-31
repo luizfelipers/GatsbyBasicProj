@@ -15,22 +15,44 @@ import Img from "gatsby-image"
 
 const Image = () => {
   const data = useStaticQuery(graphql`
-    query {
-      placeholderImage: file(relativePath: { eq: "gatsby-astronaut.png" }) {
+     query MyQuery {
+  allFile(filter: {extension: 
+    {regex: "/(jpg)|(png)|(jpeg)/"}
+}) 
+{
+    edges {
+      node {
+        id
+        publicURL
+        base
         childImageSharp {
-          fluid(maxWidth: 300) {
+          fluid {
             ...GatsbyImageSharpFluid
           }
         }
       }
     }
+  }
+}
+
   `)
 
-  if (!data?.placeholderImage?.childImageSharp?.fluid) {
-    return <div>Picture not found</div>
-  }
+  return (
+    <div className='image-container'>
+      <h1>Veja nossos destinos</h1>
+      <div className='image-grid'>
+        {data.allFile.edges.map((image, key) => (
+          <Img
+            key={key}
+            className='image-item'
+            fluid={image.node.base.split('.')[0]}
+          >
+          </Img>
+        ))}
+      </div>
+    </div>
+  )
 
-  return <Img fluid={data.placeholderImage.childImageSharp.fluid} />
 }
 
 export default Image
